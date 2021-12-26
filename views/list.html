@@ -3,11 +3,13 @@
       {% block content%}
       <ul class="list-group">
       {% for item in posts %}
-      <li class="list-group-item" data-id="{{item._id}}">
+      <li class="list-group-item" aria-current="true" data-id="{{item._id}}">
         
-        <h4>할일 {{item._id}} 제목 : {{item.title}}</h4>
-        <p>할일 마감날짜 : {{item.date}}</p>
-        <button class="delete" data-id="{{item._id}}">삭제</button>
+        <p>할일 {{item._id}}</p> 
+        <h4>제목 : {{item.title}}</h4>
+        <p>마감날짜 : {{item.date}}</p>
+        <button type="button" class="btn btn-danger delete" data-id="{{item._id}}">삭제</button>
+        <!-- <button class="delete" data-id="{{item._id}}">삭제</button> -->
       </li>
       {% endfor %}
       </ul>
@@ -17,29 +19,38 @@
   //   //let postNum = e.target.dataSet.id;
   // }); 
   console.log("ddd")
-  const deletePost = (e) => {
-  console.log(e);
+  function deletePost(e){
+    e.stopPropagation();
+  console.log(e.target.dataset.id);
   const deleteList = document.querySelector(`.list-group-item[data-id="${e.target.dataset.id}"]`);
   const postNum = e.target.dataset.id;
-  const pushBtn = $(this);
+  const pushBtn = this;
+  console.log(pushBtn)
   $.ajax({
   method : 'DELETE',
   url : '/delete',
   data : {_id : e.target.dataset.id}
-  }).done(function(result){
+  }).done((result) => {
     //페이지를 강제로 새로고침 해주세요
     //삭제버튼을 누른 <li> 요소를 제거해주세요.
+    // location.reload();
+    console.log(this.parentNode);
     console.log('success');
     //deleteList.remove();
-    pushBtn.parent('li').fadeOut();
+    this.parentNode.remove();
+    
+    // pushBtn.parent('li').fadeOut();
 
   }).fail((xhr,textStatus,errorThrown) => {
   console.log(xhr,textStatus,errorThrown);
 
   })
+  
   }
 
   const enterDetail = (e) => {
+  console.log("여기",e)
+  console.log()
   $.ajax({
   method : 'GET',
   url : '/detail/' + e.target.dataset.id,

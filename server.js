@@ -2,16 +2,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const nunjucks = require("nunjucks");
-
+require("dotenv").config();
 let db;
 let board_id = 0;
-MongoClient.connect((err, client) => {
+MongoClient.connect(process.env.DB_URL, (err, client) => {
   if (err) {
     return console.log(err);
   }
   db = client.db("todoapp");
 
-  app.listen(8080, () => {
+  app.listen(process.env.PORT, () => {
     console.log("listening on 8080");
   });
 });
@@ -23,6 +23,7 @@ nunjucks.configure("views", {
   express: app,
   watch: true,
 });
+app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   // res.sendFile(__dirname + "/views" + "/index.html");
@@ -30,12 +31,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/write", (req, res) => {
-  console.log(req);
+  // console.log(req);
   res.render("write");
 });
 
 app.post("/add", (req, res) => {
-  res.send("전송완료");
   db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
     let PostNum = result.totalPost;
     db.collection("post").insertOne(
@@ -53,6 +53,7 @@ app.post("/add", (req, res) => {
         );
       }
     );
+    res.redirect("/list");
   });
 
   console.log(req.body.title);
@@ -76,14 +77,13 @@ app.delete("/delete", (req, res) => {
   console.log(req.body);
   db.collection("post").deleteOne(req.body, (err, result) => {
     console.log("삭제완료");
-    res.status(200).send({ message: "성공했습니다." });
+    res.status(200).send({ message: "성공했습니다." }); //200 : 성공, 400 : 고객잘못 요청 실패, 500: 서버문제 요청 실패
   });
 });
 
 app.get("/detail/:id", (req, res) => {
   //: 은 뒤에 어떤 문자열을 입력한 경로
-  console.log(req.params.id);
-  console.log("gi");
+  // console.log(req.params.id);
   req.params.id = parseInt(req.params.id);
   db.collection("post").findOne({ _id: req.params.id }, (err, result) => {
     console.log(result);
@@ -91,4 +91,8 @@ app.get("/detail/:id", (req, res) => {
     }
     res.render("detail", { data: result });
   });
+});
+
+app.get("/edit", (req, res) => {
+  res.render("edit");
 });
