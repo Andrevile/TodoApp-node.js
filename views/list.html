@@ -47,17 +47,15 @@
   })
   
   }
-
-  const enterDetail = (e) => {
-  console.log("여기",e)
-  console.log()
+  // const enterDetail = e => {
+  function enterDetail(e){
   $.ajax({
   method : 'GET',
-  url : '/detail/' + e.target.dataset.id,
-  data : {_id : e.target.dataset.id}
+  url : '/detail/' + this.dataset.id,
+  data : {_id : this.dataset.id}
   }).done((result) => {
   console.log('success');
-  location.href='/detail/' + e.target.dataset.id;
+  location.href='/detail/' + this.dataset.id;
   })
 
   }
@@ -65,7 +63,7 @@
   deleteAllBtn.forEach(btn => btn.addEventListener('click',deletePost));
 
   const clickDetail = document.querySelectorAll('.list-group-item');
-  clickDetail.forEach(Detail => Detail.addEventListener('click',enterDetail));
+  clickDetail.forEach(Detail => Detail.addEventListener('click',enterDetail,false));
 
     
   </script>
