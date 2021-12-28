@@ -17,7 +17,8 @@ MongoClient.connect(process.env.DB_URL, (err, client) => {
 });
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.set("view engine", "html");
 nunjucks.configure("views", {
   express: app,
@@ -36,6 +37,7 @@ app.get("/write", (req, res) => {
 });
 
 app.post("/add", (req, res) => {
+  console.log(req.body);
   db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
     let PostNum = result.totalPost;
     db.collection("post").insertOne(
@@ -53,10 +55,12 @@ app.post("/add", (req, res) => {
         );
       }
     );
-    res.redirect("/list");
+    res.send("hell");
+    // res.render("list");
+    // res.redirect("/list");
   });
 
-  console.log(req.body.title);
+  // console.log(req.body.title);
 });
 
 app.get("/list", (req, res) => {

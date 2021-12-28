@@ -7,12 +7,13 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <!-- <script type="text/Javascript" src="/write.js"></script> -->
     
     <title>Hello, world!</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Todo App</a>
+        <a class="navbar-brand" href="/">Todo App</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -20,13 +21,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Write</a>
+              <a class="nav-link" href="/write">Write</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">임시</a>
+                <a class="nav-link" href="/list">List</a>
               </li>
             
             
@@ -37,11 +38,12 @@
           </form>
         </div>
       </nav>
+
       <h4 class="container mt-4"><strong>글 작성페이지</strong></h4>
 
         <div class="container mt-3">
-            <form id = "test_form" action="/add" method="POST">
-              
+            <!-- <form id = "test_form" action="/add" method="POST"> -->
+            <form id = "test_form">
             <div class="form-group">
                 <label>오늘의 할일</label>
                 <input type="text" class="form-control" name="title">
@@ -50,14 +52,63 @@
                 <label>날짜</label>
                 <input type="text" class="form-control" name="date">
             </div>
-            <button type="submit" class="btn btn-outline-secondary">Submit</button>
+            <button type="submit" id="write-submit" class="btn btn-outline-secondary">Submit</button>
             </form>
         </div>
+    
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+    <script>
+        function writeRequest(e){
+            e.preventDefault()
+            const title = e.target.title.value;
+            const date = e.target.date.value;
+            console.log(title,date)
+            const testFormData = new FormData(document.getElementById("test_form"));
+            console.log(testFormData);
+            const data = {
+                title: title,
+                date: date,
+            }
+            console.log(JSON.stringify(data))
+            fetch("http://localhost:8080/add", {
+                method: "POST",
+                cache: "no-cache",
+                mode: 'cors',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                }).then(res => console.log(res))
+                
+        }
+        console.log("222")
+        const formSubmit = document.getElementById("test_form")
+        // console.log(formSubmit)
+        formSubmit.addEventListener('submit',writeRequest);
+        console.log("ett");
+        
+        
+    </script>
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+    -->
+  </body>
+</html>
+
+
+       
+      
+  
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script> -->
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
@@ -65,6 +116,8 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
     -->
-    <script type="text/Javascript" src="../write.js"></script>
-  </body>
-</html>
+    
+
+    <!-- <script type="text/Javascript" src="../write.js"></script> -->
+  <!-- </body> -->
+<!-- </html> -->
