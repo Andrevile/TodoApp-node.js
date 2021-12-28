@@ -55,9 +55,9 @@ app.post("/add", (req, res) => {
         );
       }
     );
-    res.send("hell");
+    // res.send("hell");
     // res.render("list");
-    // res.redirect("/list");
+    res.redirect("/list");
   });
 
   // console.log(req.body.title);
@@ -97,6 +97,28 @@ app.get("/detail/:id", (req, res) => {
   });
 });
 
-app.get("/edit", (req, res) => {
-  res.render("edit");
-});
+app
+  .route("/edit/:id")
+  .get(function (req, res) {
+    req.params.id = parseInt(req.params.id);
+    db.collection("post").findOne({ _id: req.params.id }, (err, result) => {
+      if (err) {
+        alert(err);
+      }
+      res.render("edit", { data: result });
+    });
+  })
+  .post(function (req, res) {
+    console.log(req.body);
+    db.collection("post").updateOne(
+      { _id: parseInt(req.body._id) },
+      { $set: { title: req.body.title, date: req.body.date } },
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log("success");
+        res.redirect("/list");
+      }
+    );
+  });

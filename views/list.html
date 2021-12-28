@@ -1,7 +1,11 @@
 {% extends 'layout.html' %}
 
       {% block content%}
-      <ul class="list-group">
+      <div style="display: flex; justify-content: center; align-items: center; ">
+      <ul class="list-group" style="width: 80%;">
+        <div style="display: flex; justify-content: center; align-items: center; padding: 10px; font-size: 20px; font-weight: bold;">
+          <p style="margin: 0;">Todo List</p>
+        </div>
       {% for item in posts %}
       <li class="list-group-item" aria-current="true" data-id="{{item._id}}">
         
@@ -9,10 +13,12 @@
         <h4>제목 : {{item.title}}</h4>
         <p>마감날짜 : {{item.date}}</p>
         <button type="button" class="btn btn-danger delete" data-id="{{item._id}}">삭제</button>
+        <button type="button" class="btn btn-danger edit" data-id="{{item._id}}">수정</button>
         <!-- <button class="delete" data-id="{{item._id}}">삭제</button> -->
       </li>
       {% endfor %}
       </ul>
+    </div>
       <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
 <script> 
   // $('.delete').click(function(e){
@@ -59,12 +65,23 @@
   })
 
   }
+
+  function editDetail(e){
+    e.stopPropagation();
+    const editTargetID = this.dataset.id;
+    fetch("/edit/" + editTargetID).then((res) => {
+      location.href = '/edit/' + this.dataset.id;
+    })
+  }
   const deleteAllBtn = document.querySelectorAll('.delete');
   deleteAllBtn.forEach(btn => btn.addEventListener('click',deletePost));
 
   const clickDetail = document.querySelectorAll('.list-group-item');
   clickDetail.forEach(Detail => Detail.addEventListener('click',enterDetail,false));
 
+  const enterEdit = document.querySelectorAll('.edit');
+  console.log(enterEdit)
+  enterEdit.forEach(Edit => Edit.addEventListener('click',editDetail))
     
   </script>
 
