@@ -41,8 +41,10 @@
                 if(res.redirected){
                   window.location.href = res.url;
                 }
-                return alert("수정 완료.");
+                alert("수정 완료.");
               })
+            }else{
+              alert("모두 입력해주세요.")
             }
           }
 

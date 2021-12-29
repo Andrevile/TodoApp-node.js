@@ -2,6 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const nunjucks = require("nunjucks");
+
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
 require("dotenv").config();
 let db;
 let board_id = 0;
@@ -17,6 +21,11 @@ MongoClient.connect(process.env.DB_URL, (err, client) => {
 });
 const app = express();
 
+app.use(
+  session({ secret: "secretCode", resave: true, saveUninitialized: false })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.set("view engine", "html");
@@ -104,6 +113,8 @@ app
     db.collection("post").findOne({ _id: req.params.id }, (err, result) => {
       if (err) {
         alert(err);
+      } else {
+        console.log(result);
       }
       res.render("edit", { data: result });
     });
@@ -122,3 +133,41 @@ app
       }
     );
   });
+
+app
+  .route("/login")
+  .get((req, res) => {
+    res.render("login");
+  })
+  .post(
+    passport.authenticate("local", { failureRedirect: "/login" }),
+    (req, res) => {
+      res.redirect("/");
+    }
+  );
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "id", //form의 name = "id"
+      passwordField: "pw", //form의 name = "pw"
+      session: true,
+      passReqToCallback: false,
+    },
+    function (inputID, inputPW, done) {
+      db.collection("login").findOne({ id: inputID }, function (err, result) {
+        if (err) {
+          return done(err);
+        }
+        if (!result) {
+          return done(null, false, { message: "존재하지 않는 아이디입니다." });
+        }
+        if (inputPW == result.pw) {
+          return done(null, result);
+        } else {
+          return done(null, false, { message: "비밀번호가 틀렸습니다." });
+        }
+      });
+    }
+  )
+);
