@@ -2,10 +2,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const nunjucks = require("nunjucks");
-
+const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 let db;
 let board_id = 0;
@@ -20,10 +21,15 @@ MongoClient.connect(process.env.DB_URL, (err, client) => {
   });
 });
 const app = express();
-
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
-  session({ secret: "secretCode", resave: true, saveUninitialized: false })
+  session({
+    secret: process.env.COOKIE_SECRET,
+    resave: true,
+    saveUninitialized: false,
+  })
 );
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -106,6 +112,18 @@ app.get("/detail/:id", (req, res) => {
   });
 });
 
+app.get("/myPage", login_check, (req, res) => {
+  res.render("myPage", { user: req.user });
+});
+
+function login_check(req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    res.send("not logged in");
+  }
+}
+
 app
   .route("/edit/:id")
   .get(function (req, res) {
@@ -137,10 +155,17 @@ app
 app
   .route("/login")
   .get((req, res) => {
-    res.render("login");
+    let fmsg = req.flash();
+    console.log("ggg", fmsg);
+
+    res.render("login", { message: fmsg });
   })
   .post(
-    passport.authenticate("local", { failureRedirect: "/login" }),
+    passport.authenticate("local", {
+      failureRedirect: "/login",
+      failureFlash: true,
+      successFlash: true,
+    }),
     (req, res) => {
       res.redirect("/");
     }
@@ -151,19 +176,22 @@ passport.use(
     {
       usernameField: "id", //form의 name = "id"
       passwordField: "pw", //form의 name = "pw"
-      session: true,
-      passReqToCallback: false,
+      session: true, //session을 저장할건지
+      passReqToCallback: false, //아이디/비밀번호 외 정보 사용시
     },
     function (inputID, inputPW, done) {
-      db.collection("login").findOne({ id: inputID }, function (err, result) {
+      console.log(inputID, inputPW);
+      db.collection("login").findOne({ id: inputID }, (err, result) => {
         if (err) {
+          console.log(err);
           return done(err);
         }
+
         if (!result) {
           return done(null, false, { message: "존재하지 않는 아이디입니다." });
         }
         if (inputPW == result.pw) {
-          return done(null, result);
+          return done(null, result, { message: "로그인 성공" });
         } else {
           return done(null, false, { message: "비밀번호가 틀렸습니다." });
         }
@@ -171,3 +199,12 @@ passport.use(
     }
   )
 );
+
+passport.serializeUser(function (user, done) {
+  done(null, user.id);
+});
+passport.deserializeUser(function (ID, done) {
+  db.collection("login").findOne({ id: ID }, (err, result) => {
+    done(null, result);
+  });
+});
