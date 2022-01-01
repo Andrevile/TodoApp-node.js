@@ -1,5 +1,7 @@
-# TodoApp-node.js
-node.js 로 TodoApp 만들기
+# TodoApp-node.js :seedling:
+<p>node.js 로 TodoApp 만들기</p>
+<p>vanilla JS를 사용하여 이벤트 구현</p>
+<p>회원가입 기능과 글 작성/삭제/수정 기능</p>
 
 ### REST원칙 6개
 ~~~
