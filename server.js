@@ -7,6 +7,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const { response } = require("express");
+const qs = require("querystring");
 require("dotenv").config();
 let db;
 let board_id = 0;
@@ -32,7 +34,7 @@ app.use(
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set("view engine", "html");
 nunjucks.configure("views", {
@@ -170,6 +172,26 @@ app
       res.redirect("/");
     }
   );
+
+app.get("/search", async (req, res) => {
+  console.log(req.query);
+  try {
+    const query = req.query.value;
+    console.log(query);
+    const dbData = await db.collection("post").find({ title: query }).toArray();
+    console.log(dbData);
+    if (dbData) {
+      console.log("sucess");
+      res.json({ message: "success" });
+      // res.render("list", { posts: data });
+    } else {
+      console.log("why");
+    }
+  } catch (err) {
+    // console.log(req.url);
+    console.log(err);
+  }
+});
 
 passport.use(
   new LocalStrategy(

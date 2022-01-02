@@ -1,11 +1,16 @@
 {% extends 'layout.html' %}
 
       {% block content%}
+
       <div style="display: flex; justify-content: center; align-items: center; ">
       <ul class="list-group" style="width: 80%;">
         <div style="display: flex; justify-content: center; align-items: center; padding: 10px; font-size: 20px; font-weight: bold;">
           <p style="margin: 0;">Todo List</p>
         </div>
+      <div class="container input-group mb-2">
+        <input class="form-control" id="search-input">
+        <button class="input-group-append btn btn-danger" id="search">검색</button>
+      </div>
       {% for item in posts %}
       <li class="list-group-item" aria-current="true" data-id="{{item._id}}">
         
@@ -42,11 +47,8 @@
     // location.reload();
     console.log(this.parentNode);
     console.log('success');
-    //deleteList.remove();
     this.parentNode.remove();
     
-    // pushBtn.parent('li').fadeOut();
-
   }).fail((xhr,textStatus,errorThrown) => {
   console.log(xhr,textStatus,errorThrown);
 
@@ -73,6 +75,20 @@
       location.href = '/edit/' + this.dataset.id;
     })
   }
+
+  async function searchInfo(){
+    const query = document.getElementById('search-input').value;
+    console.log("query",query)
+    try{
+      let response = await fetch("/search?value="+query);
+      response = await response.json();
+      console.log(response.message)
+      
+    }catch(err){
+      console.log(err)
+    }
+
+  }
   const deleteAllBtn = document.querySelectorAll('.delete');
   deleteAllBtn.forEach(btn => btn.addEventListener('click',deletePost));
 
@@ -82,6 +98,9 @@
   const enterEdit = document.querySelectorAll('.edit');
   console.log(enterEdit)
   enterEdit.forEach(Edit => Edit.addEventListener('click',editDetail))
+
+  const getInfo = document.getElementById('search');
+  getInfo.addEventListener('click',searchInfo);
     
   </script>
 
