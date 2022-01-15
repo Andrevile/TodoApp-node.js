@@ -1,7 +1,7 @@
 # TodoApp-node.js :seedling:
 <p>- node.js 로 TodoApp 만들기</p>
 <p>- vanilla JS를 사용하여 이벤트 구현</p>
-<p>- 회원가입 기능과 글 작성/삭제/수정 기능</p>
+<p>- 글 작성/삭제/수정 기능</p>
 
 ### REST원칙 6개
 ~~~
@@ -31,3 +31,8 @@
 4.띄어쓰기는 대시(-)이용
 5.자료 하나당 하나의 URL
 ~~~
+
+### URL
+https://express-todoapp-andrevile.herokuapp.com/
+
+계속 업데이트 예정..
