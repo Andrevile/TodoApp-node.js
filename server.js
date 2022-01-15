@@ -88,7 +88,7 @@ app.get("/list", (req, res) => {
       if (err) {
         console.log(err);
       }
-      console.log(result);
+      console.log("dd", result);
       res.render("list", { posts: result });
     }); //데이터베이스 모두 가져오기
 });
@@ -174,7 +174,7 @@ app
   );
 
 app.get("/search", async (req, res) => {
-  console.log(req.query);
+  console.log(decodeURI(req.query));
   try {
     const query = req.query.value;
     console.log(query);
@@ -182,14 +182,13 @@ app.get("/search", async (req, res) => {
     console.log(dbData);
     if (dbData) {
       console.log("sucess");
-      res.json({ message: "success" });
-      // res.render("list", { posts: data });
-    } else {
-      console.log("why");
+      // res.json({ message: "success", url: "/sarch?value" + query });
+      res.render("list", { posts: dbData });
     }
   } catch (err) {
     // console.log(req.url);
     console.log(err);
+    res.send("ERROR");
   }
 });
 

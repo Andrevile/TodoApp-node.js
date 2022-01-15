@@ -4,7 +4,7 @@
   "description": "node.js 로 TodoApp 만들기",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",

@@ -78,15 +78,23 @@
 
   async function searchInfo(){
     const query = document.getElementById('search-input').value;
-    console.log("query",query)
-    try{
-      let response = await fetch("/search?value="+query);
-      response = await response.json();
-      console.log(response.message)
+    // let response = await fetch("/search?value="+ query);
+    // response = await response.json();
+    // console.log(response);
+    // console.log(query);
+    
+    window.location.href = "/search?value=" + encodeURI(query);
+    
+    // console.log("query",query)
+    // try{
+    //   let response = await fetch("/search?value="+query);
+    //   // window.location.href = "/search";
+    //   // response = await response.json();
+    //   console.log(response)
       
-    }catch(err){
-      console.log(err)
-    }
+    // }catch(err){
+    //   console.log(err)
+    // }
 
   }
   const deleteAllBtn = document.querySelectorAll('.delete');
